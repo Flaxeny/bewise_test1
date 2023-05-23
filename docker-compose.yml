@@ -1,0 +1,44 @@
+version: "3.11"
+
+services:
+
+  db:
+    container_name: postgres-container
+    image: postgres:14.4-alpine
+    restart: always
+    expose:
+      - 5432
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+
+  api:
+    container_name: fastapi-container
+    depends_on:
+      - db
+    build:
+      context: src/.
+      dockerfile: Dockerfile
+    command: bash -c "
+      while !</dev/tcp/db/5432;
+      do sleep 1;
+      done;
+      alembic upgrade head;
+      pytest --color=yes;
+      uvicorn app.main:app --host 0.0.0.0 --reload --use-colors
+      "
+    volumes:
+      - ./src/app:/code/app
+      - ./src/alembic.ini:/code/alembic.ini
+      - ./src/migrations:/code/migrations
+      - ./src/pytest.ini:/code/pytest.ini
+      - ./src/app/tests:/code/app/tests
+    ports:
+      - "8010:8000"
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
