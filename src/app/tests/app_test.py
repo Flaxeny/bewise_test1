@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from fastapi import status
 
 from src.app.db import get_db
-from config_test import overrides_get_db
+from .conftest import overrides_get_db
 from src.app.main import app
 
 

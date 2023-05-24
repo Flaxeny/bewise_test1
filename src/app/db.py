@@ -3,7 +3,6 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import SQLAlchemyError
 
 from fastapi import HTTPException
-from typing import AsyncGenerator
 
 from .config import settings
 

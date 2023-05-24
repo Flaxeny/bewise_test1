@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Depends, BackgroundTasks, Response, status, Query
-from pydantic import PositiveInt
 
 import logging
 from typing import Literal
